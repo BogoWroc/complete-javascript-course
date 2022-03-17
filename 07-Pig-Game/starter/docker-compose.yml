@@ -1,0 +1,9 @@
+version: '3'
+services:
+  web:
+    image: game-big-pig
+    build: .
+    container_name: my-big-pig
+    restart: always
+    ports:
+      - '80:80'
