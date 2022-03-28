@@ -76,25 +76,84 @@ const displayMovements = function (movs) {
     });
 }
 
-const calcDisplayBalance = function (movements){
-    const balance = movements.reduce((acc, mov)=> acc+mov,0);
-    labelBalance.textContent = `${balance} EUR`
+const calcDisplayBalance = function (acc) {
+    acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
+    labelBalance.textContent = `${acc.balance} €`
 }
 
 const createUserNames = function (accounts) {
     accounts.forEach((it) =>
         it.username = it.owner.toLowerCase()
-        .split(" ")
-        .map((e) => e[0])
-        .join('')
+            .split(" ")
+            .map((e) => e[0])
+            .join('')
     );
 }
 
+const calcDisplaySummary = (acc) => {
+    const incomes = acc.movements
+        .filter((mov) => mov > 0)
+        .reduce((acc, mov) => acc + mov, 0);
 
-displayMovements(account1.movements);
-calcDisplayBalance(account1.movements);
+    const out = acc.movements
+        .filter((mov) => mov < 0)
+        .reduce((acc, mov) => acc + mov, 0);
+
+    const interest = acc.movements
+        .filter((mov) => mov > 0)
+        .map((dep) => dep * acc.interestRate / 100)
+        .filter((int) => int >= 1)
+        .reduce((acc, cur) => acc + cur, 0);
+
+    labelSumIn.textContent = `${incomes} €`
+    labelSumOut.textContent = `${Math.abs(out)} €`
+    labelSumInterest.textContent = `${interest} €`
+
+
+}
+
 createUserNames(accounts);
-console.log(accounts);
+
+btnTransfer.addEventListener('click', (e) => {
+    e.preventDefault();
+    const amount = Number(inputTransferAmount.value);
+    const receiverAcc = accounts.find(acc => acc.username === inputTransferTo.value);
+
+    inputTransferAmount.value = inputTransferTo.value = '';
+
+    if (amount > 0 && receiverAcc && currentAccount.balance >= amount && receiverAcc?.username !== currentAccount.username) {
+        currentAccount.movements.push(-amount);
+        receiverAcc.movements.push(amount);
+
+        updateUI(currentAccount);
+    }
+});
+
+function updateUI(acc) {
+    displayMovements(acc.movements);
+    calcDisplayBalance(acc);
+    calcDisplaySummary(acc);
+}
+
+let currentAccount;
+btnLogin.addEventListener('click', (e) => {
+
+    // prevent form from submitting
+    e.preventDefault();
+    currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value)
+
+    console.log(currentAccount);
+
+    if (currentAccount?.pin === Number(inputLoginPin.value)) {
+        inputLoginUsername.value = inputLoginPin.value = '';
+        inputLoginPin.blur();
+
+        labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`;
+        containerApp.style.opacity = 100;
+
+        updateUI(currentAccount);
+    }
+});
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
