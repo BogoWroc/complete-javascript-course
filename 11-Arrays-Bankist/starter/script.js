@@ -114,6 +114,17 @@ const calcDisplaySummary = (acc) => {
 
 createUserNames(accounts);
 
+btnLoan.addEventListener('click', (e)=>{
+    e.preventDefault();
+    const amount = Number(inputLoanAmount.value);
+    if(amount >0 && currentAccount.movements.some(it => it >= amount * 0.1)){
+        currentAccount.movements.push(amount);
+        updateUI(currentAccount);
+    }
+
+    inputLoanAmount.value = '';
+});
+
 btnTransfer.addEventListener('click', (e) => {
     e.preventDefault();
     const amount = Number(inputTransferAmount.value);
