@@ -135,6 +135,20 @@ function updateUI(acc) {
     calcDisplaySummary(acc);
 }
 
+btnClose.addEventListener('click', (e) => {
+        e.preventDefault();
+        inputCloseUsername.value = inputClosePin.value = '';
+
+        if (currentAccount.username === inputCloseUsername.value && currentAccount.pin === Number(inputClosePin.value)) {
+            const index = accounts.findIndex(acc => acc.username === currentAccount.username);
+
+            accounts.splice(index, 1);
+
+            containerApp.style.opacity = 0;
+        }
+    }
+);
+
 let currentAccount;
 btnLogin.addEventListener('click', (e) => {
 
