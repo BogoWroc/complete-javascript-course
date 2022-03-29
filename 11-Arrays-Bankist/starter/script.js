@@ -61,10 +61,11 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = function (movs) {
+const displayMovements = function (movs, sort = false) {
     containerMovements.innerHTML = '';
 
-    movs.forEach((mov, i) => {
+    const movements = sort ? movs.slice().sort((a, b) => a - b) : movs
+    movements.forEach((mov, i) => {
         const type = mov > 0 ? 'deposit' : 'withdrawal';
 
         const html = `<div class="movements__row">
@@ -114,10 +115,17 @@ const calcDisplaySummary = (acc) => {
 
 createUserNames(accounts);
 
-btnLoan.addEventListener('click', (e)=>{
+let sorted = false;
+btnSort.addEventListener('click', (e) => {
+    e.preventDefault();
+    displayMovements(currentAccount.movements, !sorted);
+    sorted = !sorted
+});
+
+btnLoan.addEventListener('click', (e) => {
     e.preventDefault();
     const amount = Number(inputLoanAmount.value);
-    if(amount >0 && currentAccount.movements.some(it => it >= amount * 0.1)){
+    if (amount > 0 && currentAccount.movements.some(it => it >= amount * 0.1)) {
         currentAccount.movements.push(amount);
         updateUI(currentAccount);
     }
