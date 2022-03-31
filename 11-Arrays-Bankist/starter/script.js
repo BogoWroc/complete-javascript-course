@@ -115,6 +115,27 @@ const calcDisplaySummary = (acc) => {
 
 createUserNames(accounts);
 
+const startLogOutTimer = function () {
+    let time = 10;
+    const tick = () => {
+        const min = String(Math.trunc(time / 60)).padStart(2, '0');
+        const sec = time % 60;
+        labelTimer.textContent = `${min}:${sec}`;
+
+        if (time === 0) {
+            clearInterval(timer);
+
+            labelWelcome.textContent = `Log in to get started`;
+            containerApp.style.opacity = 0;
+        }
+
+        time--;
+    }
+    tick();
+    const timer = setInterval(tick, 1000)
+    return timer;
+}
+
 let sorted = false;
 btnSort.addEventListener('click', (e) => {
     e.preventDefault();
@@ -128,6 +149,9 @@ btnLoan.addEventListener('click', (e) => {
     if (amount > 0 && currentAccount.movements.some(it => it >= amount * 0.1)) {
         currentAccount.movements.push(amount);
         updateUI(currentAccount);
+
+        clearInterval(timer);
+        timer = startLogOutTimer();
     }
 
     inputLoanAmount.value = '';
@@ -145,6 +169,9 @@ btnTransfer.addEventListener('click', (e) => {
         receiverAcc.movements.push(amount);
 
         updateUI(currentAccount);
+
+        clearInterval(timer);
+        timer = startLogOutTimer();
     }
 });
 
@@ -168,7 +195,7 @@ btnClose.addEventListener('click', (e) => {
     }
 );
 
-let currentAccount;
+let currentAccount, timer;
 btnLogin.addEventListener('click', (e) => {
 
     // prevent form from submitting
@@ -184,6 +211,8 @@ btnLogin.addEventListener('click', (e) => {
         labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`;
         containerApp.style.opacity = 100;
 
+        if (timer) clearInterval(timer);
+        timer = startLogOutTimer();
         updateUI(currentAccount);
     }
 });
