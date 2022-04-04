@@ -32,9 +32,27 @@ EV.prototype.accelerate = function (){
     console.log(`${this.name} going at ${this.speed} km/h, with a charge ${this._charge}%`);
 }
 
+class EVCl extends Car {
+    constructor(name, speed, chargeTo) {
+        super(name, speed);
+        this._charge = chargeTo
+    }
+
+    charge(chargeTo) {
+        this._charge = chargeTo;
+    }
+
+    accelerate(){
+        this.speed +=20;
+        this._charge -=1;
+        console.log(`${this.name} going at ${this.speed} km/h, with a charge ${this._charge}%`);
+    }
+}
+
 const bmw = new Car('BMW', 120);
 const mercedes = new Car('Mercedes',95);
 const tesla = new EV('Tesla',120,50);
+const tesla2 = new EVCl('Tesla2',120,50);
 
 tesla.accelerate()
 tesla.accelerate()
@@ -46,6 +64,17 @@ tesla.accelerate()
 tesla.break()
 tesla.break()
 tesla.break()
+
+tesla2.accelerate()
+tesla2.accelerate()
+tesla2.accelerate()
+tesla2.accelerate()
+tesla2.charge(60)
+tesla2.accelerate()
+tesla2.accelerate()
+tesla2.break()
+tesla2.break()
+tesla2.break()
 
 
 bmw.accelerate()
